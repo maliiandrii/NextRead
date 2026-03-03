@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Hero -->
+<div class="rounded-4 mb-5 p-5 text-white text-center"
+     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <h1 class="display-5 fw-bold"><i class="bi bi-book-half"></i> Welcome to NextRead</h1>
+    <p class="lead mb-4">Your online library for easy book borrowing</p>
+    <a href="{{ url_for('books.index') }}" class="btn btn-light btn-lg me-2">
+        <i class="bi bi-collection"></i> Browse Catalog
+    </a>
+    {% if not current_user.is_authenticated %}
+    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg">
+        <i class="bi bi-person-plus"></i> Register
+    </a>
+    {% endif %}
+</div>
+
+<!-- Features -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card h-100 text-center p-4">
+            <div class="display-4 text-primary mb-3"><i class="bi bi-collection"></i></div>
+            <h5>Large Catalog</h5>
+            <p class="text-muted">Thousands of books across various genres and authors</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 text-center p-4">
+            <div class="display-4 text-success mb-3"><i class="bi bi-search"></i></div>
+            <h5>Easy Search</h5>
+            <p class="text-muted">Find books by title, author, or ISBN instantly</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 text-center p-4">
+            <div class="display-4 text-warning mb-3"><i class="bi bi-bookmark-check"></i></div>
+            <h5>Online Borrowing</h5>
+            <p class="text-muted">Borrow books with one click and track your history</p>
+        </div>
+    </div>
+</div>
+
+<!-- Recent books -->
+{% if recent_books %}
+<h3 class="mb-3">Recently Added</h3>
+<div class="row g-3">
+    {% for book in recent_books %}
+    <div class="col-md-4 col-lg-2">
+        <div class="card book-card h-100">
+            <div class="card-body">
+                <h6 class="card-title">{{ book.title }}</h6>
+                <p class="card-text small text-muted">{{ book.author }}</p>
+                {% if book.available > 0 %}
+                <span class="badge bg-success">Available: {{ book.available }}</span>
+                {% else %}
+                <span class="badge bg-danger">Unavailable</span>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0">
+                <a href="{{ url_for('books.detail', book_id=book.id) }}"
+                   class="btn btn-sm btn-outline-primary w-100">View</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

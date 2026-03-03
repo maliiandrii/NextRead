@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center p-4">
+                <div class="display-1 text-secondary mb-3"><i class="bi bi-person-circle"></i></div>
+                <h4>{{ current_user.full_name or current_user.username }}</h4>
+                <p class="text-muted">@{{ current_user.username }}</p>
+                {% if current_user.is_admin %}
+                <span class="badge bg-warning text-dark fs-6">Administrator</span>
+                {% else %}
+                <span class="badge bg-primary fs-6">Reader</span>
+                {% endif %}
+                <hr>
+                <p class="mb-1"><i class="bi bi-envelope"></i> {{ current_user.email }}</p>
+                {% if current_user.profile and current_user.profile.phone %}
+                <p class="mb-1"><i class="bi bi-telephone"></i> {{ current_user.profile.phone }}</p>
+                {% endif %}
+                {% if current_user.profile and current_user.profile.address %}
+                <p class="mb-1"><i class="bi bi-geo-alt"></i> {{ current_user.profile.address }}</p>
+                {% endif %}
+                <p class="text-muted small mt-2">Joined: {{ current_user.created_at.strftime('%Y-%m-%d') }}</p>
+                <div class="d-grid gap-2 mt-3">
+                    <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil"></i> Edit Profile
+                    </a>
+                    <a href="{{ url_for('auth.change_password') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-key"></i> Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% if current_user.profile and current_user.profile.bio %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title">About</h6>
+                <p class="mb-0">{{ current_user.profile.bio }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-clock-history"></i> Recent Borrowings</div>
+            <div class="card-body">
+                {% if borrowings %}
+                <div class="list-group list-group-flush">
+                    {% for b in borrowings %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ b.book.title }}</strong>
+                            <br><small class="text-muted">{{ b.book.author }}</small>
+                        </div>
+                        <div class="text-end">
+                            {% if b.status == 'borrowed' %}
+                            <span class="badge bg-warning text-dark">Borrowed</span>
+                            {% else %}
+                            <span class="badge bg-success">Returned</span>
+                            {% endif %}
+                            <br><small class="text-muted">{{ b.borrow_date }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('borrowings.my_borrowings') }}" class="btn btn-outline-primary btn-sm">
+                        View All Borrowings
+                    </a>
+                </div>
+                {% else %}
+                <p class="text-muted text-center my-3">No borrowings yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

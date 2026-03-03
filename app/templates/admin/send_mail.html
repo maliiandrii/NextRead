@@ -1,0 +1,42 @@
+{% extends 'admin/base.html' %}
+{% block admin_content %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.users_list') }}">Users</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.user_detail', user_id=user.id) }}">{{ user.username }}</a></li>
+        <li class="breadcrumb-item active">Send Email</li>
+    </ol>
+</nav>
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-envelope"></i> Send Email to {{ user.username }}</h5>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-muted">Recipient: <strong>{{ user.email }}</strong></p>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.subject.label(class="form-label") }}
+                        {{ form.subject(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.body.label(class="form-label") }}
+                        {{ form.body(class="form-control", rows=8) }}
+                    </div>
+                    <div class="d-flex gap-2">
+                        {{ form.submit(class="btn btn-info text-white") }}
+                        <a href="{{ url_for('admin.user_detail', user_id=user.id) }}"
+                           class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-info-circle"></i>
+                    To use email sending, configure SMTP settings in the <code>.env</code> file.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

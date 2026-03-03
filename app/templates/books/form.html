@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('books.index') }}">Catalog</a></li>
+        <li class="breadcrumb-item active">{{ action }} Book</li>
+    </ol>
+</nav>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">{{ action }} Book</h5></div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="row g-3">
+                        <div class="col-12">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                            {% for e in form.title.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-8">
+                            {{ form.author.label(class="form-label") }}
+                            {{ form.author(class="form-control" + (" is-invalid" if form.author.errors else "")) }}
+                            {% for e in form.author.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.published_year.label(class="form-label") }}
+                            {{ form.published_year(class="form-control" + (" is-invalid" if form.published_year.errors else "")) }}
+                            {% for e in form.published_year.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.isbn.label(class="form-label") }}
+                            {{ form.isbn(class="form-control" + (" is-invalid" if form.isbn.errors else "")) }}
+                            {% for e in form.isbn.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.quantity.label(class="form-label") }}
+                            {{ form.quantity(class="form-control" + (" is-invalid" if form.quantity.errors else "")) }}
+                            {% for e in form.quantity.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-12">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=4) }}
+                        </div>
+                        <div class="col-12">
+                            {{ form.genres.label(class="form-label") }}
+                            {{ form.genres(class="form-select", size=5) }}
+                            <div class="form-text">Hold Ctrl/Cmd to select multiple genres</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        {{ form.submit(class="btn btn-primary") }}
+                        {% if book %}
+                        <a href="{{ url_for('books.detail', book_id=book.id) }}" class="btn btn-secondary">Cancel</a>
+                        {% else %}
+                        <a href="{{ url_for('books.index') }}" class="btn btn-secondary">Cancel</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

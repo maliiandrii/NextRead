@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-collection"></i> Book Catalog</h2>
+    {% if current_user.is_authenticated and current_user.is_admin %}
+    <a href="{{ url_for('books.create') }}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Add Book
+    </a>
+    {% endif %}
+</div>
+
+<!-- Search & Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label">Search</label>
+                <input type="text" name="search" value="{{ search }}"
+                       class="form-control" placeholder="Title, author, or ISBN...">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Genre</label>
+                <select name="genre" class="form-select">
+                    <option value="">All Genres</option>
+                    {% for genre in genres %}
+                    <option value="{{ genre.id }}" {% if selected_genre == genre.id %}selected{% endif %}>
+                        {{ genre.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if books %}
+<div class="row g-3">
+    {% for book in books %}
+    <div class="col-md-4">
+        <div class="card book-card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ book.title }}</h5>
+                <p class="text-muted mb-1"><i class="bi bi-person"></i> {{ book.author }}</p>
+                {% if book.isbn %}
+                <p class="text-muted small mb-1"><i class="bi bi-upc"></i> {{ book.isbn }}</p>
+                {% endif %}
+                {% if book.published_year %}
+                <p class="text-muted small mb-2"><i class="bi bi-calendar"></i> {{ book.published_year }}</p>
+                {% endif %}
+                {% for genre in book.genres %}
+                <span class="badge bg-secondary me-1">{{ genre.name }}</span>
+                {% endfor %}
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small">Total: {{ book.quantity }}</span>
+                    {% if book.available > 0 %}
+                    <span class="badge bg-success ms-2">Available: {{ book.available }}</span>
+                    {% else %}
+                    <span class="badge bg-danger ms-2">Unavailable</span>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('books.detail', book_id=book.id) }}"
+                   class="btn btn-sm btn-outline-primary">View</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if pagination.pages > 1 %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if pagination.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('books.index', page=pagination.prev_num, search=search, genre=selected_genre) }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for p in pagination.iter_pages() %}
+            {% if p %}
+            <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('books.index', page=p, search=search, genre=selected_genre) }}">{{ p }}</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">…</span></li>
+            {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('books.index', page=pagination.next_num, search=search, genre=selected_genre) }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="text-center py-5">
+    <div class="display-4 text-muted"><i class="bi bi-search"></i></div>
+    <p class="text-muted mt-3">No books found.</p>
+    {% if current_user.is_authenticated and current_user.is_admin %}
+    <a href="{{ url_for('books.create') }}" class="btn btn-success">Add First Book</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
